@@ -1,4 +1,4 @@
-import tests.context
+import tests.context  # noqa: F401
 import unittest
 from tests.utils import NanbiTest
 
@@ -10,14 +10,18 @@ from nanbi.connectors.common import col
 
 
 class TestDataFrame(unittest.TestCase):
+    def test_with_column(self):
+        df = DataFrame(DataFrameReference("test", {}))
+        result = df.with_column("test_column", col("a"))
+        expected = DataFrame(
+            OperationWithColumn(
+                DataFrameReference("test", {}), "test_column", Column(ColumnReference("a"))
+            )
+        )
+        NanbiTest.assertEquals(result, expected)
 
-  def test_with_column(self):
-    df = DataFrame(DataFrameReference("test", {}))
-    result = df.with_column("test_column", col("a"))
-    expected = DataFrame(OperationWithColumn(DataFrameReference("test", {}), "test_column", Column(ColumnReference("a"))))
-    NanbiTest.assertEquals(result, expected)
+        # TODO: Good luck covering 100%...
 
-    # TODO: Good luck covering 100%...
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

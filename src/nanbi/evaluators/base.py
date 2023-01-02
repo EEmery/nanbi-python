@@ -1,2 +1,2 @@
-class Evaluator():
-  pass
+class Evaluator:
+    pass
