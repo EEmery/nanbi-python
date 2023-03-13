@@ -1,0 +1,12 @@
+#! /bin/bash
+
+export DEV_PATH="dev/personal/nanbi-python"
+export COV_SCOPE="src/"
+export COV_FILE_PATH="tests/coverage/coverage"
+export COV_HTML_PATH="tests/coverage/htmlcov"
+
+coverage run --source=$COV_SCOPE --data-file=$COV_FILE_PATH -m unittest discover -v -s tests/
+coverage html --data-file=$COV_FILE_PATH --directory=$COV_HTML_PATH
+
+echo "\nView the coverage report at:"
+echo $HOME"/"$DEV_PATH"/"$COV_HTML_PATH"/index.html"
