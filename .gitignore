@@ -2,3 +2,5 @@
 *.venv
 __pycache__/
 tests/coverage/
+src/nanbi.egg-info/
+dist/
