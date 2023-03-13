@@ -1,0 +1,33 @@
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nanbi"
+version = "0.0.1"
+description = "A framework that allows the definition of data transformations in a composable way, agnostic of data processing engine."
+readme = "README.md"
+authors = [{ name = "Eduardo Emery", email = "emeryecs@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["data", "transformation", "pandas", "SQL", "Spark"]
+dependencies = [
+    "pandas==1.5.2",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "coverage==7.0.1",
+    "pyflakes==3.0.1",
+    "black==22.12.0",
+    "twine==4.0.2",
+    "build==0.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/EEmery/nanbi-python"
