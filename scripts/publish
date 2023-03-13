@@ -1,0 +1,7 @@
+#! /bin/bash
+
+# Publish to PyPI (for production)
+# twine upload dist/*
+
+# Publish to TestPyPI (for testing)
+twine upload -r testpypi dist/*
