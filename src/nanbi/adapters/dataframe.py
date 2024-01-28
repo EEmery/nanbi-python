@@ -57,7 +57,9 @@ class DataFrame:
         return self.eval.eval(self)
 
     def display(self):
-        return self.evaluate()
+        evaluated_df = self.evaluate()
+        print(evaluated_df)
+        return evaluated_df
 
     def d(self):
         return self.d(self)
