@@ -26,6 +26,9 @@ class PandasEvaluator(Evaluator):
             opn.OperationInvert: self.invert_handler,
             # Grouping Column Operators
             opn.OperationMean: self.mean_handler,
+            opn.OperationMax: self.max_handler,
+            opn.OperationMin: self.min_handler,
+            opn.OperationSum: self.sum_handler,
             # Misc Column Operators
             opn.OperationRename: self.rename_handler,
             opn.OperationWindow: self.window_handler,
@@ -130,10 +133,20 @@ class PandasEvaluator(Evaluator):
     def mean_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).mean()
 
-    def window_handler(self, op, pandas_df):
-        has_partitions = (op.partition_by is not None) or len(op.partition_by) == 0
-        has_ordered_by = (op.order_by is not None) or len(op.order_by) == 0
+    def max_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).max()
+    
+    def min_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).min()
+    
+    def sum_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).sum()
 
+    def window_handler(self, op, pandas_df):
+        has_partitions = (op.partition_by is not None) and len(op.partition_by) > 0
+        has_ordered_by = (op.order_by is not None) and len(op.order_by) > 0
+
+        partition_by_names = []
         if has_partitions:
             partition_by_names = [c.op.col_name for c in op.partition_by]
 
@@ -146,7 +159,7 @@ class PandasEvaluator(Evaluator):
             original_index_order = pandas_df.index
 
         partitions = (
-            pandas_df.groupby(by=partition_by_names) if has_partitions else [None, pandas_df]
+            pandas_df.groupby(by=partition_by_names) if has_partitions else [(None, pandas_df)]
         )
 
         eval_partitions = []
