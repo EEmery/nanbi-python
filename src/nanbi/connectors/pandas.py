@@ -25,5 +25,5 @@ def from_dictionary(d):
 
 
 def from_csv(file_path, sep=",", *args, **kargs):
-    pandas_df = pd.read_csv(file_path, sep, *args, **kargs)
+    pandas_df = pd.read_csv(file_path, sep=sep, **kargs)
     return from_dataframe(pandas_df)
