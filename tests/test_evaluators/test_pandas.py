@@ -259,6 +259,36 @@ class TestPandasEvaluator(unittest.TestCase):
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         # TODO: Add more test cases
 
+    def test_eval_union_by_name(self):
+        result1 = (
+            self.df2
+            .union_by_name(self.df2)
+            .evaluate()
+        )
+
+        expected1 = pd.DataFrame([
+            ["a", 1, 1.1, "apple"],
+            ["a", 2, 2.1, "pineapple"],
+            ["b", 1, 1.1, "orange"],
+            ["a", 4, 4.1, "apple"],
+            ["c", 5, 5.1, "orange"],
+            ["d", 6, 6.1, "orange"],
+            ["a", 7, 7.1, "apricot"],
+            ["b", 8, 8.1, "grape"],
+            ["a", 1, 1.1, "apple"],
+            ["a", 2, 2.1, "pineapple"],
+            ["b", 1, 1.1, "orange"],
+            ["a", 4, 4.1, "apple"],
+            ["c", 5, 5.1, "orange"],
+            ["d", 6, 6.1, "orange"],
+            ["a", 7, 7.1, "apricot"],
+            ["b", 8, 8.1, "grape"],
+        ],
+        columns=["farmer", "weight", "price", "fruit"])
+
+        NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
+        # TODO: Add more test cases
+
 
 if __name__ == "__main__":
     unittest.main()

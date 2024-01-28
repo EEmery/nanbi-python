@@ -29,6 +29,11 @@ class DataFrame:
         df.op = op.OperationJoin(self.op, other.op, cond, on, join_type)
         return df
 
+    def union_by_name(self, other):
+        df = self.copy()
+        df.op = op.OperationUnionByName(self.op, other.op)
+        return df
+
     def group_by(self, group_keys=None, group_cols=None):
         # TODO: throw error whe group_cols is None. Only group_keys
         # can be None. You also shouldn't switch the order of the arguments
