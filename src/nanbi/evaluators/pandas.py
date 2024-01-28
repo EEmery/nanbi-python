@@ -40,6 +40,7 @@ class PandasEvaluator(Evaluator):
             opn.OperationWithColumn: self.with_column_handler,
             opn.OperationWhere: self.where_handler,
             opn.OperationJoin: self.join_handler,
+            opn.OperationUnionByName: self.union_by_name_handler,
             opn.OperationGroupBy: self.group_by_handler,
             opn.OperationOrderBy: self.order_by_handler,
             # Leaf Operators
@@ -230,6 +231,11 @@ class PandasEvaluator(Evaluator):
         right_df = self._eval(op.right)
         # TODO: Throw error when "on" argument is not defined
         return left_df.merge(right_df, on=op.on, how=op.join_type)
+
+    def union_by_name_handler(self, op):
+        left_df = self._eval(op.left)
+        right_df = self._eval(op.right)
+        return pd.concat([left_df, right_df], ignore_index=True)
 
     def group_by_handler(self, op):
         # TODO: group_keys is being treated as a List[str]

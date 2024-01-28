@@ -159,6 +159,11 @@ class OperationJoin(OperationBinaryNode):
         return self.__super__() + ["cond", "on", "join_type"]
 
 
+class OperationUnionByName(OperationBinaryNode):
+    def __init__(self, left, right):
+        super().__init__("union_by_name", left, right)
+
+
 class OperationGroupBy(OperationUnaryNode):
     def __init__(self, next, group_keys, group_cols):
         super().__init__("group_by", next)
