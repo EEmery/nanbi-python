@@ -24,7 +24,6 @@ def from_dictionary(d):
     return from_dataframe(pandas_df)
 
 
-def from_csv(file_path):
-    # TODO: Takes a csv file_path and build
-    # a pandas df
-    pass
+def from_csv(file_path, sep=",", *args, **kargs):
+    pandas_df = pd.read_csv(file_path, sep, *args, **kargs)
+    return from_dataframe(pandas_df)
