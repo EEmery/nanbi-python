@@ -96,6 +96,21 @@ class OperationSum(OperationUnaryNode):
         super().__init__("sum", next)
 
 
+class OperationSubstring(OperationUnaryNode):
+    def __init__(self, next, position, length):
+        super().__init__("substring", next)
+        self.position = position
+        self.length = length
+
+
+class OperationSlice(OperationUnaryNode):
+    def __init__(self, next, start, end, step):
+        super().__init__("slice", next)
+        self.start = start
+        self.end = end
+        self.step = step
+
+
 class OperationRename(OperationUnaryNode):
     def __init__(self, next, new_name):
         super().__init__("as", next)

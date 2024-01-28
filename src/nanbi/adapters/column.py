@@ -116,6 +116,12 @@ class Column:
     def sum(self):
         return Column(op.OperationSum(self.op))
 
+    def substring(self, position, length):
+        return Column(op.OperationSubstring(self.op, position, length))
+
+    def slice(self, start=None, end=None, step=None):
+        return Column(op.OperationSlice(self.op, start, end, step))
+
     def __str__(self):
         return str(self.op)
 

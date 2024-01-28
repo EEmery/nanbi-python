@@ -217,6 +217,48 @@ class TestPandasEvaluator(unittest.TestCase):
         # 4. Set only partition by
         # 5. Set only order by
 
+    def test_eval_substring(self):
+        result1 = self.df2.with_column(
+            "substr_fruit",
+            col("fruit").substring(1, 2),
+        ).evaluate()
+
+        expected1 = pd.DataFrame([
+            ["a", 1, 1.1, "apple", "pp"],
+            ["a", 2, 2.1, "pineapple", "in"],
+            ["b", 1, 1.1, "orange", "ra"],
+            ["a", 4, 4.1, "apple", "pp"],
+            ["c", 5, 5.1, "orange", "ra"],
+            ["d", 6, 6.1, "orange", "ra"],
+            ["a", 7, 7.1, "apricot", "pr"],
+            ["b", 8, 8.1, "grape", "ra"],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "substr_fruit"])
+
+        NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
+        # TODO: Add more test cases
+
+    def test_eval_slice(self):
+        result1 = self.df2.with_column(
+            "substr_fruit",
+            col("fruit").slice(1, 3),
+        ).evaluate()
+
+        expected1 = pd.DataFrame([
+            ["a", 1, 1.1, "apple", "pp"],
+            ["a", 2, 2.1, "pineapple", "in"],
+            ["b", 1, 1.1, "orange", "ra"],
+            ["a", 4, 4.1, "apple", "pp"],
+            ["c", 5, 5.1, "orange", "ra"],
+            ["d", 6, 6.1, "orange", "ra"],
+            ["a", 7, 7.1, "apricot", "pr"],
+            ["b", 8, 8.1, "grape", "ra"],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "substr_fruit"])
+
+        NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
+        # TODO: Add more test cases
+
 
 if __name__ == "__main__":
     unittest.main()
