@@ -29,6 +29,9 @@ class PandasEvaluator(Evaluator):
             opn.OperationMax: self.max_handler,
             opn.OperationMin: self.min_handler,
             opn.OperationSum: self.sum_handler,
+            # String Column Operators
+            opn.OperationSubstring: self.handle_substring,
+            opn.OperationSlice: self.handle_slice,
             # Misc Column Operators
             opn.OperationRename: self.rename_handler,
             opn.OperationWindow: self.window_handler,
@@ -57,8 +60,10 @@ class PandasEvaluator(Evaluator):
         # pass
 
         if pandas_df is None:
+            # Evaluates a dataframe
             return self.handlers[op_type](op)
         else:
+            # Evaluates a column
             return self.handlers[op_type](op, pandas_df)
 
     def add_handler(self, op, pandas_df):
@@ -141,6 +146,17 @@ class PandasEvaluator(Evaluator):
     
     def sum_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).sum()
+
+    def handle_substring(self, op, pandas_df):
+        start = op.position
+        stop = start + op.length
+        return self._eval(op.next, pandas_df).str.slice(start, stop)
+
+    def handle_slice(self, op, pandas_df):
+        start = op.start
+        stop = op.end
+        step = op.step
+        return self._eval(op.next, pandas_df).str.slice(start, stop, step)
 
     def window_handler(self, op, pandas_df):
         has_partitions = (op.partition_by is not None) and len(op.partition_by) > 0
