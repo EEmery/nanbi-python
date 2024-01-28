@@ -70,7 +70,7 @@ The output will be a Pandas DataFrame, for example:
 4 10    51
 ```
 
-### 2. Enriching tables (`.with_columns()`)
+### 2. Enriching tables (`.with_column()`)
 
 Nanbi goal is to allow you to define data transformations to enrich your table with derived data in a composable way. One of the main ways that you can achieve this, is by the use of the `.with_column()` method. It creates a new column in your table according to the transformation formula you gave it. For example:
 

@@ -15,53 +15,55 @@ class TestPandasEvaluator(unittest.TestCase):
 
         self.precision = 0.001
 
-        pandas_df = pd.DataFrame({"num_a": [10, 50, 20, 50, 20], "num_b": [41, 51, 21, 31, 11]})
+        pandas_df = pd.DataFrame([
+            [10, 41],
+            [50, 51],
+            [20, 21],
+            [50, 31],
+            [20, 11],
+        ],
+        columns=["num_a", "num_b"])
+
+        pandas_df2 = pd.DataFrame([
+            ["a", 1, 1.1, "apple"],
+            ["a", 2, 2.1, "pineapple"],
+            ["b", 1, 1.1, "orange"],
+            ["a", 4, 4.1, "apple"],
+            ["c", 5, 5.1, "orange"],
+            ["d", 6, 6.1, "orange"],
+            ["a", 7, 7.1, "apricot"],
+            ["b", 8, 8.1, "grape"],
+        ],
+        columns=["farmer", "weight", "price", "fruit"])
 
         self.df = nb.from_dataframe(pandas_df)
-
-        pandas_df2 = pd.DataFrame(
-            {
-                "fruit": [
-                    "apple",
-                    "pineapple",
-                    "orange",
-                    "apple",
-                    "orange",
-                    "orange",
-                    "apricot",
-                    "grape",
-                ],
-                "farmer": ["a", "a", "b", "a", "c", "d", "a", "b"],
-                "weight": [1, 2, 1, 4, 5, 6, 7, 8],
-                "price": [1.1, 2.1, 1.1, 4.1, 5.1, 6.1, 7.1, 8.1],
-            }
-        )
-
         self.df2 = nb.from_dataframe(pandas_df2)
 
     def test_eval_add(self):
         result = self.df.with_column("result", col("num_a") + col("num_b")).evaluate()
 
-        expected = pd.DataFrame(
-            {
-                "num_a": [10, 50, 20, 50, 20],
-                "num_b": [41, 51, 21, 31, 11],
-                "result": [51, 101, 41, 81, 31],
-            }
-        )
+        expected = pd.DataFrame([
+            [10, 41, 51],
+            [50, 51, 101],
+            [20, 21, 41],
+            [50, 31, 81],
+            [20, 11, 31],
+        ],
+        columns=["num_a", "num_b", "result"])
 
         NanbiTest.assertEquals(result, expected)
 
     def test_eval_sub(self):
         result = self.df.with_column("result", col("num_a") - col("num_b")).evaluate()
 
-        expected = pd.DataFrame(
-            {
-                "num_a": [10, 50, 20, 50, 20],
-                "num_b": [41, 51, 21, 31, 11],
-                "result": [-31, -1, -1, 19, 9],
-            }
-        )
+        expected = pd.DataFrame([
+            [10, 41, -31],
+            [50, 51, -1],
+            [20, 21, -1],
+            [50, 31, 19],
+            [20, 11, 9],
+        ],
+        columns=["num_a", "num_b", "result"])
 
         NanbiTest.assertEquals(result, expected)
 
@@ -70,11 +72,32 @@ class TestPandasEvaluator(unittest.TestCase):
         result2 = self.df.order_by(col("num_a").desc(), col("num_b")).evaluate()
         result3 = self.df.order_by(col("num_a").desc(), col("num_b").desc()).evaluate()
 
-        expected1 = pd.DataFrame({"num_a": [10, 20, 20, 50, 50], "num_b": [41, 11, 21, 31, 51]})
+        expected1 = pd.DataFrame([
+            [10, 41],
+            [20, 11],
+            [20, 21],
+            [50, 31],
+            [50, 51],
+        ],
+        columns=["num_a", "num_b"])
 
-        expected2 = pd.DataFrame({"num_a": [50, 50, 20, 20, 10], "num_b": [31, 51, 11, 21, 41]})
+        expected2 = pd.DataFrame([
+            [50, 31],
+            [50, 51],
+            [20, 11],
+            [20, 21],
+            [10, 41],
+        ],
+        columns=["num_a", "num_b"])
 
-        expected3 = pd.DataFrame({"num_a": [50, 50, 20, 20, 10], "num_b": [51, 31, 21, 11, 41]})
+        expected3 = pd.DataFrame([
+            [50, 51],
+            [50, 31],
+            [20, 21],
+            [20, 11],
+            [10, 41],
+        ],
+        columns=["num_a", "num_b"])
 
         NanbiTest.assertEquals(result1, expected1)
         NanbiTest.assertEquals(result2, expected2)
@@ -91,13 +114,28 @@ class TestPandasEvaluator(unittest.TestCase):
         # clearly specify the operations order with "()", the behaviour will be very
         # confusing and misleading
 
-        expected1 = pd.DataFrame({"num_a": [10], "num_b": [41]})
+        expected1 = pd.DataFrame([
+            [10, 41],
+        ],
+        columns=["num_a", "num_b"])
 
-        expected2 = pd.DataFrame({"num_a": [50, 50], "num_b": [51, 31]})
+        expected2 = pd.DataFrame([
+            [50, 51],
+            [50, 31],
+        ],
+        columns=["num_a", "num_b"])
 
-        expected3 = pd.DataFrame({"num_a": [20], "num_b": [21]})
+        expected3 = pd.DataFrame([
+            [20, 21],
+        ],
+        columns=["num_a", "num_b"])
 
-        expected4 = pd.DataFrame({"num_a": [20, 50, 20], "num_b": [21, 31, 11]})
+        expected4 = pd.DataFrame([
+            [20, 21],
+            [50, 31],
+            [20, 11],
+        ],
+        columns=["num_a", "num_b"])
 
         expected5 = pd.DataFrame({"num_a": [], "num_b": []}, dtype="int64")
 
@@ -120,22 +158,25 @@ class TestPandasEvaluator(unittest.TestCase):
             [col("weight").mean().r("mean_weight"), col("price").mean().r("mean_price")],
         ).evaluate()
 
-        expected1 = pd.DataFrame(
-            {
-                "fruit": ["apple", "apricot", "grape", "orange", "pineapple"],
-                "mean_weight": [2.5, 7.0, 8.0, 4.0, 2.0],
-                "mean_price": [2.6, 7.1, 8.1, 4.1, 2.1],
-            }
-        )
+        expected1 = pd.DataFrame([
+            ["apple", 2.5, 2.6],
+            ["apricot", 7.0, 7.1],
+            ["grape", 8.0, 8.1],
+            ["orange", 4.0, 4.1],
+            ["pineapple", 2.0, 2.1],
+        ],
+        columns=["fruit", "mean_weight", "mean_price"])
 
-        expected2 = pd.DataFrame(
-            {
-                "farmer": ["a", "a", "a", "b", "b", "c", "d"],
-                "fruit": ["apple", "apricot", "pineapple", "grape", "orange", "orange", "orange"],
-                "mean_weight": [2.5, 7.0, 2.0, 8.0, 1.0, 5.0, 6.0],
-                "mean_price": [2.6, 7.1, 2.1, 8.1, 1.1, 5.1, 6.1],
-            }
-        )
+        expected2 = pd.DataFrame([
+            ["a", "apple", 2.5, 2.6],
+            ["a", "apricot", 7.0, 7.1],
+            ["a", "pineapple", 2.0, 2.1],
+            ["b", "grape", 8.0, 8.1],
+            ["b", "orange", 1.0, 1.1],
+            ["c", "orange", 5.0, 5.1],
+            ["d", "orange", 6.0, 6.1],
+        ],
+        columns=["farmer", "fruit", "mean_weight", "mean_price"])
 
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         NanbiTest.assertEquals(result2, expected2, check_exact=False, atol=self.precision)
@@ -144,26 +185,28 @@ class TestPandasEvaluator(unittest.TestCase):
         result1 = self.df2.with_column(
             "acc_mean_price",
             col("price").mean().over(Window.partition_by(col("farmer")).order_by(col("price"))),
+        ).with_column(
+            "acc_max_price",
+            col("price").max(),
+        ).with_column(
+            "acc_min_price",
+            col("price").min(),
+        ).with_column(
+            "acc_sum_price",
+            col("price").sum().over(Window.order_by(col("farmer"))),
         ).evaluate()
 
-        expected1 = pd.DataFrame(
-            {
-                "fruit": [
-                    "apple",
-                    "pineapple",
-                    "orange",
-                    "apple",
-                    "orange",
-                    "orange",
-                    "apricot",
-                    "grape",
-                ],
-                "farmer": ["a", "a", "b", "a", "c", "d", "a", "b"],
-                "weight": [1, 2, 1, 4, 5, 6, 7, 8],
-                "price": [1.1, 2.1, 1.1, 4.1, 5.1, 6.1, 7.1, 8.1],
-                "acc_mean_price": [1.1, 1.6, 1.1, 2.433333, 5.1, 6.1, 3.6, 4.6],
-            }
-        )
+        expected1 = pd.DataFrame([
+            ["a", 1, 1.1, "apple", 1.1, 8.1, 1.1, 1.1],
+            ["a", 2, 2.1, "pineapple", 1.6, 8.1, 1.1, 3.2],
+            ["b", 1, 1.1, "orange", 1.1, 8.1, 1.1, 15.5],
+            ["a", 4, 4.1, "apple", 2.433333, 8.1, 1.1, 7.3],
+            ["c", 5, 5.1, "orange", 5.1, 8.1, 1.1, 28.7],
+            ["d", 6, 6.1, "orange", 6.1, 8.1, 1.1, 34.8],
+            ["a", 7, 7.1, "apricot", 3.6, 8.1, 1.1, 14.4],
+            ["b", 8, 8.1, "grape", 4.6, 8.1, 1.1, 23.6],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "acc_mean_price", "acc_max_price", "acc_min_price", "acc_sum_price"])
 
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
 
