@@ -5,7 +5,7 @@ from tests.utils import NanbiTest
 
 import nanbi.connectors.pandas as nb
 from nanbi.connectors.common import col, lit
-from nanbi.connectors.functions import window
+from nanbi.connectors.functions import window, when
 
 
 class TestPandasEvaluator(unittest.TestCase):
@@ -191,6 +191,26 @@ class TestPandasEvaluator(unittest.TestCase):
 
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         NanbiTest.assertEquals(result2, expected2, check_exact=False, atol=self.precision)
+
+    def test_eval_when(self):
+        result = self.df2.with_column("weight_category", (
+            when(col("weight") > lit(5), lit("heavy"))
+            .when(col("weight") <= lit(5), lit("light"))
+        )).evaluate()
+
+        expected = pd.DataFrame([
+            ["a", 1, 1.1, "apple", "light"],
+            ["a", 2, 2.1, "pineapple", "light"],
+            ["b", 1, 1.1, "orange", "light"],
+            ["a", 4, 4.1, "apple", "light"],
+            ["c", 5, 5.1, "orange", "light"],
+            ["d", 6, 6.1, "orange", "heavy"],
+            ["a", 7, 7.1, "apricot", "heavy"],
+            ["b", 8, 8.1, "grape", "heavy"],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "weight_category"])
+
+        NanbiTest.assertEquals(result, expected, check_exact=False, atol=self.precision)
 
     def test_eval_window(self):
         result1 = self.df2.with_column(

@@ -33,6 +33,9 @@ class Column:
     def cast(self, new_type):
         return Column(op.OperationCast(self.op, new_type))
 
+    def when(self, condition, value):
+        return Column(op.OperationWhen(condition.op, value.op, self.op))
+
     def over(self, window_spec, partition_by=None, order_by=None):
         # TODO: Throw error when both window spec and other args are set
         if partition_by is None and order_by is None:

@@ -134,6 +134,16 @@ class OperationCast(OperationUnaryNode):
         return self.__super__() + ["new_type"]
 
 
+class OperationWhen(OperationUnaryNode):
+    def __init__(self, next, value, else_value=None):
+        super().__init__("when", next)
+        self.value = value
+        self.else_value = else_value
+
+    def __dir__(self):
+        return self.__super__() + ["value", "else_value"]
+
+
 class OperationSelect(OperationUnaryNode):
     def __init__(self, next, cols):
         super().__init__(".select", next)
