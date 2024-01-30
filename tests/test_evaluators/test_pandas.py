@@ -5,7 +5,7 @@ from tests.utils import NanbiTest
 
 import nanbi.connectors.pandas as nb
 from nanbi.connectors.common import col, lit
-from nanbi.operations.auxiliary import Window
+from nanbi.connectors.functions import window
 
 
 class TestPandasEvaluator(unittest.TestCase):
@@ -195,7 +195,7 @@ class TestPandasEvaluator(unittest.TestCase):
     def test_eval_window(self):
         result1 = self.df2.with_column(
             "acc_mean_price",
-            col("price").mean().over(Window.partition_by(col("farmer")).order_by(col("price"))),
+            col("price").mean().over(window.partition_by(col("farmer")).order_by(col("price"))),
         ).with_column(
             "acc_max_price",
             col("price").max(),
@@ -204,7 +204,7 @@ class TestPandasEvaluator(unittest.TestCase):
             col("price").min(),
         ).with_column(
             "acc_sum_price",
-            col("price").sum().over(Window.order_by(col("farmer"))),
+            col("price").sum().over(window.order_by(col("farmer"))),
         ).evaluate()
 
         expected1 = pd.DataFrame([
