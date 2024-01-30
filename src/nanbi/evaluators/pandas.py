@@ -35,6 +35,7 @@ class PandasEvaluator(Evaluator):
             opn.OperationConcat: self.handle_concat,
             # Misc Column Operators
             opn.OperationRename: self.rename_handler,
+            opn.OperationCast: self.cast_handler,
             opn.OperationWindow: self.window_handler,
             # DataFrame Transformation Operators
             opn.OperationSelect: self.select_handler,
@@ -212,6 +213,9 @@ class PandasEvaluator(Evaluator):
 
     def rename_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).rename(op.new_name)
+
+    def cast_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).astype(op.new_type)
 
     def select_handler(self, op):
         pandas_df = self._eval(op.next)
