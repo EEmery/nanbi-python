@@ -122,6 +122,9 @@ class Column:
     def slice(self, start=None, end=None, step=None):
         return Column(op.OperationSlice(self.op, start, end, step))
 
+    def concat(self, other):
+        return Column(op.OperationConcat(self.op, other.op))
+
     def __str__(self):
         return str(self.op)
 

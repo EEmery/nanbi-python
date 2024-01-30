@@ -270,6 +270,27 @@ class TestPandasEvaluator(unittest.TestCase):
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         # TODO: Add more test cases
 
+    def test_eval_concat(self):
+        result1 = self.df2.with_column(
+            "farmer_and_fruit",
+            col("farmer").concat(col("fruit")),
+        ).evaluate()
+
+        expected1 = pd.DataFrame([
+            ["a", 1, 1.1, "apple", "aapple"],
+            ["a", 2, 2.1, "pineapple", "apineapple"],
+            ["b", 1, 1.1, "orange", "borange"],
+            ["a", 4, 4.1, "apple", "aapple"],
+            ["c", 5, 5.1, "orange", "corange"],
+            ["d", 6, 6.1, "orange", "dorange"],
+            ["a", 7, 7.1, "apricot", "aapricot"],
+            ["b", 8, 8.1, "grape", "bgrape"],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "farmer_and_fruit"])
+
+        NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
+        # TODO: Add more test cases
+
     def test_eval_union_by_name(self):
         result1 = (
             self.df2

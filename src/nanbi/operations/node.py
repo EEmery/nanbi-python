@@ -111,6 +111,11 @@ class OperationSlice(OperationUnaryNode):
         self.step = step
 
 
+class OperationConcat(OperationBinaryNode):
+    def __init__(self, left, right):
+        super().__init__("+", left, right)
+
+
 class OperationRename(OperationUnaryNode):
     def __init__(self, next, new_name):
         super().__init__("as", next)
