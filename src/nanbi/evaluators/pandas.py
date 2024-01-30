@@ -32,6 +32,7 @@ class PandasEvaluator(Evaluator):
             # String Column Operators
             opn.OperationSubstring: self.handle_substring,
             opn.OperationSlice: self.handle_slice,
+            opn.OperationConcat: self.handle_concat,
             # Misc Column Operators
             opn.OperationRename: self.rename_handler,
             opn.OperationWindow: self.window_handler,
@@ -158,6 +159,11 @@ class PandasEvaluator(Evaluator):
         stop = op.end
         step = op.step
         return self._eval(op.next, pandas_df).str.slice(start, stop, step)
+
+    def handle_concat(self, op, pandas_df):
+        left = self._eval(op.left, pandas_df)
+        right = self._eval(op.right, pandas_df)
+        return left + right
 
     def window_handler(self, op, pandas_df):
         has_partitions = (op.partition_by is not None) and len(op.partition_by) > 0
