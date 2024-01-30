@@ -6,6 +6,10 @@ def col(col_name):
     return Column(ColumnReference(col_name))
 
 
+def cols(col_names):
+    return [col(col_name) for col_name in col_names]
+
+
 def lit(value):
     return Column(ColumnLiteral(value))
 
