@@ -109,6 +109,11 @@ class TestPandasEvaluator(unittest.TestCase):
         result3 = self.df.where((col("num_a") == lit(20)) & (col("num_b") == lit(21))).evaluate()
         result4 = self.df.where((col("num_a") == lit(20)) | (col("num_b") == lit(31))).evaluate()
         result5 = self.df.where((col("num_a") == lit(20)) & (col("num_b") == lit(31))).evaluate()
+        result6 = self.df2.where(
+            (col("farmer") == lit("a"))
+            & (col("weight") >= lit(1.5))
+            & (col("weight") <= lit(2.5))
+        ).evaluate()
 
         # TODO: Implement "and" and "or" instead of "&" and "|". If users doesn't
         # clearly specify the operations order with "()", the behaviour will be very
@@ -139,11 +144,17 @@ class TestPandasEvaluator(unittest.TestCase):
 
         expected5 = pd.DataFrame({"num_a": [], "num_b": []}, dtype="int64")
 
+        expected6 = pd.DataFrame([
+            ["a", 2, 2.1, "pineapple"],
+        ],
+        columns=["farmer", "weight", "price", "fruit"])
+
         NanbiTest.assertEquals(result1, expected1)
         NanbiTest.assertEquals(result2, expected2)
         NanbiTest.assertEquals(result3, expected3)
         NanbiTest.assertEquals(result4, expected4)
         NanbiTest.assertEquals(result5, expected5)
+        NanbiTest.assertEquals(result6, expected6)
 
     def test_eval_group_by(self):
 
