@@ -30,6 +30,9 @@ class Column:
     def r(self, new_name):
         return self.rename(new_name)
 
+    def cast(self, new_type):
+        return Column(op.OperationCast(self.op, new_type))
+
     def over(self, window_spec, partition_by=None, order_by=None):
         # TODO: Throw error when both window spec and other args are set
         if partition_by is None and order_by is None:

@@ -125,6 +125,15 @@ class OperationRename(OperationUnaryNode):
         return self.__super__() + ["new_name"]
 
 
+class OperationCast(OperationUnaryNode):
+    def __init__(self, next, new_type):
+        super().__init__("cast", next)
+        self.new_type = new_type
+
+    def __dir__(self):
+        return self.__super__() + ["new_type"]
+
+
 class OperationSelect(OperationUnaryNode):
     def __init__(self, next, cols):
         super().__init__(".select", next)
