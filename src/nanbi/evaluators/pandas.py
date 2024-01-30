@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from nanbi.evaluators.base import Evaluator
 from nanbi.operations.leaf import ColumnReference, ColumnLiteral, DataFrameReference
@@ -30,12 +31,13 @@ class PandasEvaluator(Evaluator):
             opn.OperationMin: self.min_handler,
             opn.OperationSum: self.sum_handler,
             # String Column Operators
-            opn.OperationSubstring: self.handle_substring,
-            opn.OperationSlice: self.handle_slice,
-            opn.OperationConcat: self.handle_concat,
+            opn.OperationSubstring: self.substring_handler,
+            opn.OperationSlice: self.slice_handler,
+            opn.OperationConcat: self.concat_handler,
             # Misc Column Operators
             opn.OperationRename: self.rename_handler,
             opn.OperationCast: self.cast_handler,
+            opn.OperationWhen: self.when_handler,
             opn.OperationWindow: self.window_handler,
             # DataFrame Transformation Operators
             opn.OperationSelect: self.select_handler,
@@ -150,18 +152,18 @@ class PandasEvaluator(Evaluator):
     def sum_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).sum()
 
-    def handle_substring(self, op, pandas_df):
+    def substring_handler(self, op, pandas_df):
         start = op.position
         stop = start + op.length
         return self._eval(op.next, pandas_df).str.slice(start, stop)
 
-    def handle_slice(self, op, pandas_df):
+    def slice_handler(self, op, pandas_df):
         start = op.start
         stop = op.end
         step = op.step
         return self._eval(op.next, pandas_df).str.slice(start, stop, step)
 
-    def handle_concat(self, op, pandas_df):
+    def concat_handler(self, op, pandas_df):
         left = self._eval(op.left, pandas_df)
         right = self._eval(op.right, pandas_df)
         return left + right
@@ -216,6 +218,17 @@ class PandasEvaluator(Evaluator):
 
     def cast_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).astype(op.new_type)
+
+    def when_handler(self, op, pandas_df):
+        condition = self._eval(op.next, pandas_df)
+        value = self._eval(op.value, pandas_df)
+
+        if op.else_value is not None:
+            else_value = self._eval(op.else_value, pandas_df)
+        else:
+            else_value = np.nan
+
+        return np.where(condition, value, else_value)
 
     def select_handler(self, op):
         pandas_df = self._eval(op.next)
