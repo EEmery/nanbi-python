@@ -237,7 +237,8 @@ class TestPandasEvaluator(unittest.TestCase):
             ["a", 7, 7.1, "apricot", 3.6, 8.1, 1.1, 14.4],
             ["b", 8, 8.1, "grape", 4.6, 8.1, 1.1, 23.6],
         ],
-        columns=["farmer", "weight", "price", "fruit", "acc_mean_price", "acc_max_price", "acc_min_price", "acc_sum_price"])
+        columns=["farmer", "weight", "price", "fruit", "acc_mean_price", "acc_max_price",
+                 "acc_min_price", "acc_sum_price"])
 
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
 

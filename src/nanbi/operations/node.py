@@ -76,11 +76,6 @@ class OperationMean(OperationUnaryNode):
         super().__init__("mean", next)
 
 
-class OperationMean(OperationUnaryNode):
-    def __init__(self, next):
-        super().__init__("mean", next)
-
-
 class OperationMax(OperationUnaryNode):
     def __init__(self, next):
         super().__init__("max", next)

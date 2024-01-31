@@ -145,10 +145,10 @@ class PandasEvaluator(Evaluator):
 
     def max_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).max()
-    
+
     def min_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).min()
-    
+
     def sum_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).sum()
 
