@@ -131,6 +131,12 @@ class Column:
     def concat(self, other):
         return Column(op.OperationConcat(self.op, other.op))
 
+    def contains(self, to_match):
+        return Column(op.OperationContains(self.op, to_match))
+
+    def regex_match(self, to_match):
+        return Column(op.OperationRegexMatch(self.op, to_match))
+
     def __str__(self):
         return str(self.op)
 

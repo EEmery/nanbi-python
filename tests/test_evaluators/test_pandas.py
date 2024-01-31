@@ -312,6 +312,46 @@ class TestPandasEvaluator(unittest.TestCase):
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         # TODO: Add more test cases
 
+    def test_eval_contains(self):
+        result = self.df2.with_column(
+            "has_p",
+            col("fruit").contains("p"),
+        ).evaluate()
+
+        expected = pd.DataFrame([
+            ["a", 1, 1.1, "apple", True],
+            ["a", 2, 2.1, "pineapple", True],
+            ["b", 1, 1.1, "orange", False],
+            ["a", 4, 4.1, "apple", True],
+            ["c", 5, 5.1, "orange", False],
+            ["d", 6, 6.1, "orange", False],
+            ["a", 7, 7.1, "apricot", True],
+            ["b", 8, 8.1, "grape", True],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "has_p"])
+
+        NanbiTest.assertEquals(result, expected, check_exact=False, atol=self.precision)
+
+    def test_eval_regex_match(self):
+        result = self.df2.with_column(
+            "starts_with_p",
+            col("fruit").regex_match("^p"),
+        ).evaluate()
+
+        expected = pd.DataFrame([
+            ["a", 1, 1.1, "apple", False],
+            ["a", 2, 2.1, "pineapple", True],
+            ["b", 1, 1.1, "orange", False],
+            ["a", 4, 4.1, "apple", False],
+            ["c", 5, 5.1, "orange", False],
+            ["d", 6, 6.1, "orange", False],
+            ["a", 7, 7.1, "apricot", False],
+            ["b", 8, 8.1, "grape", False],
+        ],
+        columns=["farmer", "weight", "price", "fruit", "starts_with_p"])
+
+        NanbiTest.assertEquals(result, expected, check_exact=False, atol=self.precision)
+
     def test_eval_cast(self):
         result1 = self.df2.with_column(
             "weight",

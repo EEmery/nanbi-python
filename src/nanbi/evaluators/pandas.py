@@ -34,6 +34,8 @@ class PandasEvaluator(Evaluator):
             opn.OperationSubstring: self.substring_handler,
             opn.OperationSlice: self.slice_handler,
             opn.OperationConcat: self.concat_handler,
+            opn.OperationContains: self.contains_handler,
+            opn.OperationRegexMatch: self.regex_match_handler,
             # Misc Column Operators
             opn.OperationRename: self.rename_handler,
             opn.OperationCast: self.cast_handler,
@@ -167,6 +169,15 @@ class PandasEvaluator(Evaluator):
         left = self._eval(op.left, pandas_df)
         right = self._eval(op.right, pandas_df)
         return left + right
+
+
+    def contains_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).str.contains(op.to_match, regex=False)
+
+
+    def regex_match_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).str.contains(op.to_match, regex=True)
+
 
     def window_handler(self, op, pandas_df):
         has_partitions = (op.partition_by is not None) and len(op.partition_by) > 0

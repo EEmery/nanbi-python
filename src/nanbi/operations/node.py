@@ -106,6 +106,18 @@ class OperationSlice(OperationUnaryNode):
         self.step = step
 
 
+class OperationContains(OperationUnaryNode):
+    def __init__(self, next, to_match):
+        super().__init__("contains", next)
+        self.to_match = to_match
+
+
+class OperationRegexMatch(OperationUnaryNode):
+    def __init__(self, next, to_match):
+        super().__init__("regex_match", next)
+        self.to_match = to_match
+
+
 class OperationConcat(OperationBinaryNode):
     def __init__(self, left, right):
         super().__init__("+", left, right)
