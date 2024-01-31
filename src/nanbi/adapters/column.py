@@ -112,13 +112,13 @@ class Column:
 
     def mean(self):
         return Column(op.OperationMean(self.op))
-    
+
     def max(self):
         return Column(op.OperationMax(self.op))
-    
+
     def min(self):
         return Column(op.OperationMin(self.op))
-    
+
     def sum(self):
         return Column(op.OperationSum(self.op))
 
