@@ -225,20 +225,23 @@ class TestPandasEvaluator(unittest.TestCase):
         ).with_column(
             "acc_sum_price",
             col("price").sum().over(window.order_by(col("farmer"))),
+        ).with_column(
+            "sum_price_per_farmer",
+            col("price").sum().over(window.partition_by(col("farmer"))),
         ).evaluate()
 
         expected1 = pd.DataFrame([
-            ["a", 1, 1.1, "apple", 1.1, 8.1, 1.1, 1.1],
-            ["a", 2, 2.1, "pineapple", 1.6, 8.1, 1.1, 3.2],
-            ["b", 1, 1.1, "orange", 1.1, 8.1, 1.1, 15.5],
-            ["a", 4, 4.1, "apple", 2.433333, 8.1, 1.1, 7.3],
-            ["c", 5, 5.1, "orange", 5.1, 8.1, 1.1, 28.7],
-            ["d", 6, 6.1, "orange", 6.1, 8.1, 1.1, 34.8],
-            ["a", 7, 7.1, "apricot", 3.6, 8.1, 1.1, 14.4],
-            ["b", 8, 8.1, "grape", 4.6, 8.1, 1.1, 23.6],
+            ["a", 1, 1.1, "apple", 1.1, 8.1, 1.1, 1.1, 14.4],
+            ["a", 2, 2.1, "pineapple", 1.6, 8.1, 1.1, 3.2, 14.4],
+            ["b", 1, 1.1, "orange", 1.1, 8.1, 1.1, 15.5, 9.2],
+            ["a", 4, 4.1, "apple", 2.433333, 8.1, 1.1, 7.3, 14.4],
+            ["c", 5, 5.1, "orange", 5.1, 8.1, 1.1, 28.7, 5.1],
+            ["d", 6, 6.1, "orange", 6.1, 8.1, 1.1, 34.8, 6.1],
+            ["a", 7, 7.1, "apricot", 3.6, 8.1, 1.1, 14.4, 14.4],
+            ["b", 8, 8.1, "grape", 4.6, 8.1, 1.1, 23.6, 9.2],
         ],
         columns=["farmer", "weight", "price", "fruit", "acc_mean_price", "acc_max_price",
-                 "acc_min_price", "acc_sum_price"])
+                 "acc_min_price", "acc_sum_price", "sum_price_per_farmer"])
 
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
 

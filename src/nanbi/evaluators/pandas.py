@@ -187,13 +187,16 @@ class PandasEvaluator(Evaluator):
         if has_partitions:
             partition_by_names = [c.op.col_name for c in op.partition_by]
 
+        order_by_names = partition_by_names
+        col_is_asc = [True] * len(partition_by_names)
         if has_ordered_by:
             order_by_names = partition_by_names + [c.op.col_name for c in op.order_by]
             col_is_asc = [True] * len(partition_by_names) + [c.is_ascending for c in op.order_by]
-            pandas_df = pandas_df.sort_values(
-                by=order_by_names, ascending=col_is_asc, inplace=False
-            )
-            original_index_order = pandas_df.index
+
+        pandas_df = pandas_df.sort_values(
+            by=order_by_names, ascending=col_is_asc, inplace=False
+        )
+        original_index_order = pandas_df.index
 
         partitions = (
             pandas_df.groupby(by=partition_by_names) if has_partitions else [(None, pandas_df)]
@@ -206,7 +209,7 @@ class PandasEvaluator(Evaluator):
                 windows = [partition.iloc[: i + 1] for i in range(len(partition))]
             else:
                 # non-rolling window
-                windows = [partition.iloc[: i + 1] for i in range(len(partition))]
+                windows = [partition.iloc[:] for i in range(len(partition))]
 
             if type(op) == opn.OperationRename:
                 eval_windows = [
@@ -222,6 +225,7 @@ class PandasEvaluator(Evaluator):
 
         unordered_final_series = pd.concat(eval_partitions, axis=1).squeeze().reset_index(drop=True)
         unordered_final_series.index = original_index_order
+
         return unordered_final_series.sort_index()
 
     def rename_handler(self, op, pandas_df):
