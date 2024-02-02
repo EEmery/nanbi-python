@@ -376,32 +376,36 @@ class TestPandasEvaluator(unittest.TestCase):
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         # TODO: Add more test cases
 
-    def test_eval_union_by_name(self):
+    def test_eval_stack(self):
         result1 = (
-            self.df2
-            .union_by_name(self.df2)
+            self.df2.stack(
+                [col("farmer"), col("fruit")],
+                [col("weight"), col("price")],
+                key_col_name="measure",
+                value_col_name="measurement",
+            )
             .evaluate()
         )
 
         expected1 = pd.DataFrame([
-            ["a", 1, 1.1, "apple"],
-            ["a", 2, 2.1, "pineapple"],
-            ["b", 1, 1.1, "orange"],
-            ["a", 4, 4.1, "apple"],
-            ["c", 5, 5.1, "orange"],
-            ["d", 6, 6.1, "orange"],
-            ["a", 7, 7.1, "apricot"],
-            ["b", 8, 8.1, "grape"],
-            ["a", 1, 1.1, "apple"],
-            ["a", 2, 2.1, "pineapple"],
-            ["b", 1, 1.1, "orange"],
-            ["a", 4, 4.1, "apple"],
-            ["c", 5, 5.1, "orange"],
-            ["d", 6, 6.1, "orange"],
-            ["a", 7, 7.1, "apricot"],
-            ["b", 8, 8.1, "grape"],
+            ["a", "apple", 1, "weight"],
+            ["a", "pineapple", 2, "weight"],
+            ["b", "orange", 1, "weight"],
+            ["a", "apple", 4, "weight"],
+            ["c", "orange", 5, "weight"],
+            ["d", "orange", 6, "weight"],
+            ["a", "apricot", 7, "weight"],
+            ["b", "grape", 8, "weight"],
+            ["a", "apple", 1.1, "price"],
+            ["a", "pineapple", 2.1, "price"],
+            ["b", "orange", 1.1, "price"],
+            ["a", "apple", 4.1, "price"],
+            ["c", "orange", 5.1, "price"],
+            ["d", "orange", 6.1, "price"],
+            ["a", "apricot", 7.1, "price"],
+            ["b", "grape", 8.1, "price"],
         ],
-        columns=["farmer", "weight", "price", "fruit"])
+        columns=["farmer", "fruit", "measurement", "measure"])
 
         NanbiTest.assertEquals(result1, expected1, check_exact=False, atol=self.precision)
         # TODO: Add more test cases

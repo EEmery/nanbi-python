@@ -195,6 +195,18 @@ class OperationUnionByName(OperationBinaryNode):
         super().__init__("union_by_name", left, right)
 
 
+class OperationStack(OperationUnaryNode):
+    def __init__(self, next, cols_to_maintain, cols_to_stack, key_col_name, value_col_name):
+        super().__init__("stack", next)
+        self.cols_to_maintain = cols_to_maintain
+        self.cols_to_stack = cols_to_stack
+        self.key_col_name = key_col_name
+        self.value_col_name = value_col_name
+
+    def __dir__(self):
+        return self.__super__() + ["cols_to_maintain", "cols_to_stack", "key_col_name", "value_col_name"]
+
+
 class OperationGroupBy(OperationUnaryNode):
     def __init__(self, next, group_keys, group_cols):
         super().__init__("group_by", next)

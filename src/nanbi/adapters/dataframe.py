@@ -34,6 +34,11 @@ class DataFrame:
         df.op = op.OperationUnionByName(self.op, other.op)
         return df
 
+    def stack(self, cols_to_maintain, cols_to_stack, key_col_name="key_col", value_col_name="value_col"):
+        df = self.copy()
+        df.op = op.OperationStack(self.op, cols_to_maintain, cols_to_stack, key_col_name, value_col_name)
+        return df
+
     def group_by(self, group_keys=None, group_cols=None):
         # TODO: throw error whe group_cols is None. Only group_keys
         # can be None. You also shouldn't switch the order of the arguments

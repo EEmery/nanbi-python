@@ -47,6 +47,7 @@ class PandasEvaluator(Evaluator):
             opn.OperationWhere: self.where_handler,
             opn.OperationJoin: self.join_handler,
             opn.OperationUnionByName: self.union_by_name_handler,
+            opn.OperationStack: self.stack_handler,
             opn.OperationGroupBy: self.group_by_handler,
             opn.OperationOrderBy: self.order_by_handler,
             # Leaf Operators
@@ -274,6 +275,22 @@ class PandasEvaluator(Evaluator):
         left_df = self._eval(op.left)
         right_df = self._eval(op.right)
         return pd.concat([left_df, right_df], ignore_index=True)
+
+    def stack_handler(self, op):
+        pandas_df = self._eval(op.next)
+        eval_cols_to_maintain = [self._eval(c.op, pandas_df) for c in op.cols_to_maintain]
+
+        stacks = []
+        for col_to_stack in op.cols_to_stack:
+            eval_col_to_stack = self._eval(col_to_stack.op, pandas_df).rename(op.value_col_name)
+            stack_cols = eval_cols_to_maintain + [eval_col_to_stack]
+
+            stack = pd.concat(stack_cols, join="inner", axis=1)
+
+            stack[op.key_col_name] = col_to_stack.op.col_name
+            stacks.append(stack)
+
+        return pd.concat(stacks, ignore_index=True)
 
     def group_by_handler(self, op):
         # TODO: group_keys is being treated as a List[str]
