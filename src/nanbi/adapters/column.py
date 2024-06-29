@@ -122,6 +122,9 @@ class Column:
     def sum(self):
         return Column(op.OperationSum(self.op))
 
+    def is_null(self):
+        return Column(op.OperationIsNull(self.op))
+
     def substring(self, position, length):
         return Column(op.OperationSubstring(self.op, position, length))
 

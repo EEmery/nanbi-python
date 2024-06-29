@@ -22,6 +22,11 @@ class DataFrame:
         df.op = op.OperationWhere(self.op, col)
         return df
 
+    def limit(self, n):
+        df = self.copy()
+        df.op = op.OperationLimit(self.op, n)
+        return df
+
     def join(self, other, cond=None, on=None, join_type="inner"):
         # TODO: Throw error when "cond" and "on" argument are both defined
         # TODO: Throw error when join type does not exist

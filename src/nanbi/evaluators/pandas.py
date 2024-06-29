@@ -25,6 +25,7 @@ class PandasEvaluator(Evaluator):
             opn.OperationXOr: self.xor_handler,
             opn.OperationOr: self.or_handler,
             opn.OperationInvert: self.invert_handler,
+            opn.OperationIsNull: self.is_null_handler,
             # Grouping Column Operators
             opn.OperationMean: self.mean_handler,
             opn.OperationMax: self.max_handler,
@@ -45,6 +46,7 @@ class PandasEvaluator(Evaluator):
             opn.OperationSelect: self.select_handler,
             opn.OperationWithColumn: self.with_column_handler,
             opn.OperationWhere: self.where_handler,
+            opn.OperationLimit: self.limit_handler,
             opn.OperationJoin: self.join_handler,
             opn.OperationUnionByName: self.union_by_name_handler,
             opn.OperationStack: self.stack_handler,
@@ -155,6 +157,9 @@ class PandasEvaluator(Evaluator):
     def sum_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).sum()
 
+    def is_null_handler(self, op, pandas_df):
+        return self._eval(op.next, pandas_df).isna()
+
     def substring_handler(self, op, pandas_df):
         start = op.position
         stop = start + op.length
@@ -171,14 +176,11 @@ class PandasEvaluator(Evaluator):
         right = self._eval(op.right, pandas_df)
         return left + right
 
-
     def contains_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).str.contains(op.to_match, regex=False)
 
-
     def regex_match_handler(self, op, pandas_df):
         return self._eval(op.next, pandas_df).str.contains(op.to_match, regex=True)
-
 
     def window_handler(self, op, pandas_df):
         has_partitions = (op.partition_by is not None) and len(op.partition_by) > 0
@@ -264,6 +266,10 @@ class PandasEvaluator(Evaluator):
         pandas_df = self._eval(op.next)
         evaluated_col = self._eval(op.col.op, pandas_df)
         return pandas_df.loc[evaluated_col].reset_index(drop=True)
+
+    def limit_handler(self, op):
+        pandas_df = self._eval(op.next)
+        return pandas_df.head(op.n)
 
     def join_handler(self, op):
         left_df = self._eval(op.left)

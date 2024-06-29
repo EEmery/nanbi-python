@@ -91,6 +91,11 @@ class OperationSum(OperationUnaryNode):
         super().__init__("sum", next)
 
 
+class OperationIsNull(OperationUnaryNode):
+    def __init__(self, next):
+        super().__init__("is_null", next)
+
+
 class OperationSubstring(OperationUnaryNode):
     def __init__(self, next, position, length):
         super().__init__("substring", next)
@@ -177,6 +182,15 @@ class OperationWhere(OperationUnaryNode):
 
     def __dir__(self):
         return self.__super__() + ["col"]
+
+
+class OperationLimit(OperationUnaryNode):
+    def __init__(self, next, n):
+        super().__init__(".limit", next)
+        self.n = n
+
+    def __dir__(self):
+        return self.__super__() + ["n"]
 
 
 class OperationJoin(OperationBinaryNode):
