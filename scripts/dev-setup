@@ -7,5 +7,3 @@ source .venv/bin/activate
 python3 -m pip install -r requirements/dev.txt
 
 deactivate
-
-source scripts/dev-activate
