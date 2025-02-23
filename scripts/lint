@@ -1,4 +1,4 @@
 #! /bin/bash
 
-python -m flake8 src/
-python -m flake8 tests/
+python3 -m flake8 src/
+python3 -m flake8 tests/
