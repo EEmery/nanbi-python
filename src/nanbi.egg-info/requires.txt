@@ -1,0 +1,6 @@
+pandas==1.5.2
+
+[dev]
+coverage==7.0.1
+pyflakes==3.0.1
+black==22.12.0
